@@ -1,0 +1,185 @@
+openapi: 3.1.0
+info:
+  title: Student course management API
+  version: 1.0.0
+servers:
+  - url: https://localhost.std23009.com
+paths:
+  /groups:
+    get:
+      description: Get all groups, with optional filters for name or school year.
+      parameters:
+        - name: groupName
+          in: query
+          schema:
+            type: string
+        - name: School year debut
+          in: query
+          description: YYYY
+          schema:
+            type: string
+            format: date
+        - name: School year debut
+          in: query
+          description: YYYY
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+
+    post:
+      description: Add a new group.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      responses: 
+        '201':
+          description: Group created successfully
+
+    put:
+      description: Update group details.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      responses:
+        '200':
+          description: Group updated successfully
+
+    delete:
+      summary: Delete a group
+      description: Remove a group by its ID.
+      parameters:
+        - name: groupId
+          in: query
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Group deleted successfully
+
+  /students:
+    get:
+      description: Get all students, with optional name filters.
+      parameters:
+        - name: studentName
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+
+    post:
+      description: Add a new student.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              
+              $ref: '#/components/schemas/createStudent'
+      responses:
+        '201':
+          description: Student created successfully
+
+    put:
+      description: Update student details.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: Student updated successfully
+
+    delete:
+      description: Remove an student by their ID.
+      parameters:
+        - name: studentId
+          in: query
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Student deleted successfully
+
+components:
+  schemas:
+    Group:
+      type: object
+      required:
+        - ID
+        - groupName
+        - groupYear
+        - promotion
+      properties:
+        ID:
+          type: string
+        groupName:
+          type: string
+        promotion:
+          type: string
+          enum:
+            - G
+            - H
+            - J
+            - K
+        groupYear:
+          type: string
+          format: date
+
+    Student:
+      type: object
+      required:
+        - ID
+      properties:
+        allOf: 
+          $ref: '#/components/schemas/createStudent'
+        ID:
+          type: string
+    createStudent:
+      type: object
+      required:
+        - Name
+        - Sex
+        - birthdate
+        - reference
+        - group
+      properties:
+        Name:
+          type: string
+        Sex:
+          type: string
+          enum:
+            - M
+            - F
+        birthdate:
+          type: string
+          format: date
+        reference:
+          type: string
+          example: "STD23XXX"
+        group:
+          type: string
